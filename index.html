@@ -4,13 +4,50 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#38bdf8" />
+    <script src="https://www.youtube.com/game_api/v1"></script>
+    <script>
+  // Game ke dauran aane wale kisi bhi error ko real-time screen par dekhne ke liye
+  window.onerror = function(message, source, lineno, colno, error) {
+    var errorDiv = document.getElementById('runtime-error-popup');
+    if(!errorDiv) {
+      errorDiv = document.createElement('div');
+      errorDiv.id = 'runtime-error-popup';
+      errorDiv.style.position = 'fixed'; errorDiv.style.bottom = '10px'; errorDiv.style.left = '10px';
+      errorDiv.style.width = '90%'; errorDiv.style.background = 'rgba(255,0,0,0.95)';
+      errorDiv.style.color = 'white'; errorDiv.style.zIndex = '999999'; errorDiv.style.padding = '15px';
+      errorDiv.style.fontSize = '14px'; errorDiv.style.borderRadius = '8px';
+      document.body.appendChild(errorDiv);
+    }
+    errorDiv.innerHTML = '<strong>Game Crashed:</strong> ' + message + '<br>Line: ' + lineno;
+    return false;
+  };
+      // 2. YouTube Playables Fast Loading Signals Code
+      window.addEventListener('DOMContentLoaded', function() {
+        // First Frame Ready: Jab HTML load ho jaye aur loading screen dikhe
+        if (window.ytgame && window.ytgame.game) {
+          window.ytgame.game.firstFrameReady();
+          console.log("YouTube API: First frame ready sent!");
+        }
+      });
+
+      window.addEventListener('load', function() {
+        // Game Ready: Jab game poori tarah khelne ke liye taiyar ho jaye
+        // React application ko load hone mein thoda time lagta hai isliye ise load event par dala hai
+        setTimeout(function() {
+          if (window.ytgame && window.ytgame.game) {
+            window.ytgame.game.gameReady();
+            console.log("YouTube API: Game ready sent!");
+          }
+        }, 1500); // 1.5 second ka delay taaki React/Vite background mein properly init ho jaye
+      });
+</script>
     <link rel="manifest" href="/manifest.json" />
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3241/3241357.png" />
     <title>Glide Gunner - Arcade Touch Shooter</title>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" defer src="/src/main.tsx"></script>
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
